@@ -1,0 +1,2 @@
+mail-parser>=3.15.0
+pyTelegramBotAPI>=3.7.7
