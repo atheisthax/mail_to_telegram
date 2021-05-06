@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3-alpine
 
 WORKDIR /opt/mail_to_telegram
 
