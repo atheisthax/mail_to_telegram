@@ -5,12 +5,8 @@ import telebot
 import base64
 import config
 
-# Optional:
 listen_addr = '0.0.0.0'
 listen_port = 1025
-# Required:
-bot_token = config.bot_token
-chat_id = config.chat_id
 
 
 class mail_to_telegram(smtpd.SMTPServer):
@@ -19,11 +15,11 @@ class mail_to_telegram(smtpd.SMTPServer):
         mail = mailparser.parse_from_bytes(data)
         message = mail.text_html[0]
         message = message[0:message.find("<br/>")]
-        bot = telebot.TeleBot(bot_token)
+        bot = telebot.TeleBot(config.bot_token)
         print(message)
         for attach in mail.attachments:
             image = base64.decodebytes(attach['payload'].encode('utf-8'))
-            bot.send_photo(chat_id=chat_id, photo=image, caption=message)
+            bot.send_photo(chat_id=config.chat_id, photo=image, caption=message)
 
 
 server = mail_to_telegram((listen_addr, int(listen_port)), None)
