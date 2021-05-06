@@ -1,0 +1,10 @@
+version: "3"
+services:
+  orskbot:
+    build: .
+    image: mail_to_telegram:060521
+    container_name: mail_to_telegram
+    restart: unless-stopped
+    network_mode: "host"
+    volumes:
+     - ./config.py:/opt/mail_to_telegram/config.py
