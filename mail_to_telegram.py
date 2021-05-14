@@ -22,7 +22,8 @@ class mail_to_telegram(smtpd.SMTPServer):
         # if mail have plaintext data - send it
         if len(mail.text_plain) > 0:
             message = mail.text_plain[0]
-        message = message[0:message.find("<br/>")]
+        if message.find("<br/>") > 0:
+            message = message[0:message.find("<br/>")]
         message = mail.mail['subject'] + '\n' + message
         bot = telebot.TeleBot(config.bot_token)
         logging.info(message)
