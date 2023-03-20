@@ -1,20 +1,17 @@
-import asyncore
 import base64
-import smtpd
 import logging.handlers
-
 import mailparser
 import telebot
-
+from aiosmtpd.controller import Controller
 import config
 
-listen_addr = '0.0.0.0'
-listen_port = 1025
 
-
-class mail_to_telegram(smtpd.SMTPServer):
-
-    def process_message(self, peer, mailfrom, rcpttos, data, mail_options=None, rcpt_options=None):
+class CustomHandler:
+    async def handle_DATA(self, server, session, envelope):
+        peer = session.peer
+        mail_from = envelope.mail_from
+        rcpt_tos = envelope.rcpt_tos
+        data = envelope.content         # type: bytes
         mail = mailparser.parse_from_bytes(data)
         # if mail have html data - send it
         if len(mail.text_html) > 0:
@@ -36,15 +33,18 @@ class mail_to_telegram(smtpd.SMTPServer):
         else:
             # if no attachments - send only text message
             bot.send_message(chat_id=config.chat_id, text=message)
+        return '250 OK'
 
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("python-mail_to_telegram")
-server = mail_to_telegram((listen_addr, int(listen_port)), None)
-logging.info("Started on %s:%s..." % (listen_addr, listen_port))
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger("python-mail_to_telegram")
+    logging.info("Started on %s:%s..." % (config.listen_addr, config.listen_port))
+    handler = CustomHandler()
+    controller = Controller(handler, hostname=config.listen_addr, port=int(config.listen_port))
+    # Run the event loop in a separate thread.
+    controller.start()
+    # Wait for the user to press Return.
+    input('SMTP server running. Press Return to stop server and exit.')
+    controller.stop()
 
-try:
-    asyncore.loop()
-except KeyboardInterrupt:
-    logging.info("Keyboard interrupt, exiting")
-    pass

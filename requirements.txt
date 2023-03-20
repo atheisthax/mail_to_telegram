@@ -1,2 +1,4 @@
 mail-parser>=3.15.0
 pyTelegramBotAPI>=3.7.7
+telebot>=0.0.5
+aiosmtpd>=1.4.4.post2
