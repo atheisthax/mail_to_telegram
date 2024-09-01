@@ -1,8 +1,8 @@
 version: "3"
 services:
-  orskbot:
+  mail_to_telegram:
     build: .
-    image: mail_to_telegram:060521
+    image: mail_to_telegram:010924
     container_name: mail_to_telegram
     restart: unless-stopped
     network_mode: "host"
