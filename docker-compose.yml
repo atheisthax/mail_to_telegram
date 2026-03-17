@@ -1,10 +1,15 @@
-version: "3"
 services:
   mail_to_telegram:
     build: .
-    image: mail_to_telegram:010924
+    image: mail_to_telegram:17032026
     container_name: mail_to_telegram
     restart: unless-stopped
-    network_mode: "host"
+    #network_mode: "host"
+    ports:
+      - "8465:8465" 
     volumes:
      - ./config.py:/opt/mail_to_telegram/config.py
+    deploy:
+      resources:
+        limits:
+          memory: 256M
